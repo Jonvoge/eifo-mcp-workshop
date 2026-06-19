@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FY2025 operating spend vs budget</title>
+<script src="assets/chart.umd.js"></script>
+<style>
+  :root { --ink:#1f2933; --muted:#6b7785; --red:#c0392b; --green:#2e7d52;
+           --grey:#9aa5b1; --line:#e4e8ec; --surface:#f4f6f8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--surface); color:var(--ink);
+          font-family:"Segoe UI",system-ui,Arial,sans-serif; }
+  .page { max-width:1080px; margin:0 auto; padding:32px; }
+  .title { font-size:23px; font-weight:600; letter-spacing:-.01em; margin:0; }
+  .sub { color:var(--muted); font-size:13px; margin:6px 0 0; }
+  .rule { height:3px; width:48px; background:var(--ink); margin:14px 0 24px; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+           background:var(--line); border:1px solid var(--line); border-radius:8px;
+           overflow:hidden; margin-bottom:24px; }
+  .kpi { background:#fff; padding:16px 18px; }
+  .k-label { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  .k-value { font-size:25px; font-weight:600; margin-top:8px; font-variant-numeric:tabular-nums; }
+  .k-delta { font-size:12px; margin-top:4px; color:var(--muted); }
+  .over { color:var(--red); } .under { color:var(--green); } .muted { color:var(--muted); }
+  .k-value.muted { color:var(--ink); }
+  .panels { display:grid; grid-template-columns:1.25fr 1fr; gap:20px; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:8px; padding:18px 20px; }
+  .panel h2 { font-size:13px; font-weight:600; margin:0 0 2px; }
+  .panel .cap { font-size:11px; color:var(--muted); margin:0 0 14px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted);
+        text-align:left; padding:6px 10px; border-bottom:1px solid var(--line); }
+  td { padding:8px 10px; border-bottom:1px solid #f0f2f4; }
+  .n { text-align:right; font-variant-numeric:tabular-nums; }
+  .full { margin-top:20px; }
+  footer { color:var(--muted); font-size:11px; margin-top:20px; }
+  @media print { body { background:#fff; } .panel,.kpi { break-inside:avoid; } }
+  @media (max-width:760px) { .kpis{grid-template-columns:repeat(2,1fr);} .panels{grid-template-columns:1fr;} }
+</style></head>
+<body><div class="page">
+  <h1 class="title">Operating spend finished +2.9% against budget in FY2025</h1>
+  <p class="sub">COGS + Opex, all cost centres · actual 28,169,417 vs budget 27,365,995 · largest overspend in Sales (+265,906)</p>
+  <div class="rule"></div>
+
+  <div class="kpis"><div class="kpi"><div class="k-label">Operating spend</div><div class="k-value muted">28,169,417</div><div class="k-delta muted">▲ 13.6% vs 2024</div></div>
+<div class="kpi"><div class="k-label">Budget</div><div class="k-value muted">27,365,995</div><div class="k-delta muted">▲ 13.5% vs 2024</div></div>
+<div class="kpi"><div class="k-label">Variance</div><div class="k-value over">+803,422</div><div class="k-delta over">Over budget</div></div>
+<div class="kpi"><div class="k-label">Variance %</div><div class="k-value over">+2.9%</div><div class="k-delta over">▲ vs plan</div></div></div>
+
+  <div class="panels">
+    <div class="panel">
+      <h2>Variance by cost centre</h2>
+      <p class="cap">Actual minus budget, FY2025. Red over, green under.</p>
+      <canvas id="varChart" height="240"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Spend by month</h2>
+      <p class="cap">Actual vs budget, FY2025.</p>
+      <canvas id="trendChart" height="240"></canvas>
+    </div>
+  </div>
+
+  <div class="panel full">
+    <h2>Cost centre detail</h2>
+    <p class="cap">FY2025 operating spend.</p>
+    <table>
+      <thead><tr><th>Cost centre</th><th class="n">Actual</th><th class="n">Budget</th>
+      <th class="n">Variance</th><th class="n">Var %</th></tr></thead>
+      <tbody><tr><td>Sales</td><td class="n">9,702,454</td><td class="n">9,436,548</td><td class="n over">+265,906</td><td class="n over">▲ 2.8%</td></tr>
+<tr><td>R&D</td><td class="n">7,771,265</td><td class="n">7,549,241</td><td class="n over">+222,024</td><td class="n over">▲ 2.9%</td></tr>
+<tr><td>G&A</td><td class="n">4,879,206</td><td class="n">4,718,274</td><td class="n over">+160,932</td><td class="n over">▲ 3.4%</td></tr>
+<tr><td>Marketing</td><td class="n">5,816,492</td><td class="n">5,661,932</td><td class="n over">+154,560</td><td class="n over">▲ 2.7%</td></tr></tbody>
+    </table>
+  </div>
+
+  <footer>Point-in-time snapshot from the local semantic model. Contains finance data; share per policy.</footer>
+</div>
+<script>
+const ink="#1f2933", red="#c0392b", green="#2e7d52", grey="#9aa5b1", muted="#6b7785";
+const money = v => v.toLocaleString();
+new Chart(document.getElementById("varChart"), {
+  type:"bar",
+  data:{ labels:["Sales", "R&D", "G&A", "Marketing"], datasets:[{
+    data:[265906, 222024, 160932, 154560],
+    backgroundColor:[265906, 222024, 160932, 154560].map(v=>v>0?red:green),
+    borderRadius:3, barThickness:22 }] },
+  options:{ indexAxis:"y", plugins:{legend:{display:false},
+    tooltip:{callbacks:{label:c=>(c.raw>0?"+":"")+money(c.raw)}}},
+    scales:{ x:{ grid:{color:"#eef1f3"}, ticks:{color:muted,callback:money} },
+              y:{ grid:{display:false}, ticks:{color:ink} } } }
+});
+new Chart(document.getElementById("trendChart"), {
+  type:"line",
+  data:{ labels:["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], datasets:[
+    { label:"Actual", data:[2182970, 2301934, 2235048, 2290262, 2350456, 2280543, 2403653, 2397583, 2339644, 2509160, 2443314, 2434850], borderColor:ink, backgroundColor:ink,
+       tension:.3, pointRadius:0, borderWidth:2 },
+    { label:"Budget", data:[2156109, 2178724, 2201343, 2223958, 2246575, 2269191, 2291808, 2314425, 2337041, 2359656, 2382275, 2404890], borderColor:grey, borderDash:[5,4],
+       tension:.3, pointRadius:0, borderWidth:1.5 } ] },
+  options:{ plugins:{legend:{position:"bottom",labels:{boxWidth:12,color:muted,font:{size:11}}}},
+    scales:{ x:{ grid:{display:false}, ticks:{color:muted,font:{size:10}} },
+              y:{ grid:{color:"#eef1f3"}, ticks:{color:muted,callback:money} } } }
+});
+</script>
+</body></html>

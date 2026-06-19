@@ -1,0 +1,55 @@
+table Account
+	lineageTag: 4813d4b9-b6a9-4ea3-b25c-94d7dfa5353c
+
+	column AccountKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cc39cab2-bf9f-47da-a450-6653442b0f30
+		summarizeBy: none
+		sourceColumn: AccountKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Account
+		dataType: string
+		lineageTag: 270f162a-3984-457c-8951-ed43d3c2f3c3
+		summarizeBy: none
+		sourceColumn: Account
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountCategory
+		dataType: string
+		lineageTag: b3493345-aab0-4ef7-bd5c-89d2aedb28d4
+		summarizeBy: none
+		sourceColumn: AccountCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountType
+		dataType: string
+		lineageTag: 4a1adac0-a842-40f6-8c9c-77745c43e09c
+		summarizeBy: none
+		sourceColumn: AccountType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Account = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [AccountKey = Int64.Type, Account = text, AccountCategory = text, AccountType = text],
+				        {
+				            {1000, "Product Revenue", "Revenue", "Income"},
+				            {1100, "Service Revenue", "Revenue", "Income"},
+				            {2000, "Cost of Goods Sold", "COGS", "Expense"},
+				            {3000, "Salaries", "Opex", "Expense"},
+				            {3100, "Travel", "Opex", "Expense"},
+				            {3200, "Software & Subscriptions", "Opex", "Expense"}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

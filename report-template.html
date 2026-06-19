@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+  HTML report template. Offline, no CDN.
+  The agent fills the marked spots from DAX query results against the model.
+  See sample-report.html for a fully worked example with real numbers.
+
+  Rules:
+   - Reference the LOCAL chart library (assets/chart.umd.js), never a CDN.
+   - Bake query results inline as JS arrays (snapshot, not a live connection).
+   - Always include a written "Summary" of the key drivers.
+   - Keep it to one page when printed.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><!-- report title --></title>
+<script src="assets/chart.umd.js"></script>
+<style>
+  body { font-family:Arial,sans-serif; color:#1a2b2d; max-width:1040px; margin:0 auto; padding:28px; }
+  header { background:#003C43; color:#fff; padding:22px 28px; border-radius:10px; }
+  .cards { display:flex; gap:14px; margin:20px 0; flex-wrap:wrap; }
+  .card { flex:1; min-width:180px; border:1px solid #e2e8e9; border-radius:10px; padding:16px; }
+  .value { font-size:26px; font-weight:700; }
+  .bad { color:#b3261e; } .good { color:#1b7a43; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th,td { padding:8px 10px; border-bottom:1px solid #e2e8e9; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  @media print { .card,canvas { break-inside:avoid; } }
+</style></head>
+<body>
+  <header><h1><!-- title --></h1><p><!-- client · period · source --></p></header>
+
+  <!-- KPI CARDS: one per salient measure (Actuals, Budget, Variance, Variance %) -->
+  <div class="cards">
+    <div class="card"><div>Actuals</div><div class="value"><!-- value --></div></div>
+    <!-- ...more cards... -->
+  </div>
+
+  <!-- SUMMARY: 2-3 sentences naming the biggest drivers, written by the agent -->
+  <div class="summary"><strong>Summary.</strong> <!-- narrative --></div>
+
+  <!-- CHARTS -->
+  <canvas id="chart1" height="220"></canvas>
+
+  <!-- DETAIL TABLE -->
+  <table><thead><!-- headers --></thead><tbody><!-- rows --></tbody></table>
+
+  <footer>Point-in-time snapshot. Contains finance data; handle per policy.</footer>
+
+<script>
+  // Replace the arrays below with the agent's DAX query results.
+  new Chart(document.getElementById("chart1"), {
+    type: "bar",
+    data: { labels: [/* categories */], datasets: [{ data: [/* values */] }] },
+    options: { plugins:{ legend:{ display:false } } }
+  });
+</script>
+</body></html>

@@ -1,0 +1,53 @@
+table CostCenter
+	lineageTag: fbdb97f8-8370-453f-9afa-0f762d2008b2
+
+	column CostCenterKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 05fa00f5-a6aa-47a7-9c9e-8bf256997bc2
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCenter
+		dataType: string
+		lineageTag: cc2e0fba-2a41-45fa-bd36-53253ed4e37e
+		summarizeBy: none
+		sourceColumn: CostCenter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		lineageTag: 01704835-4bf4-42e5-a13b-5bb6888c4e38
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 06bb16b8-5d83-4e6d-8474-b5913c56961d
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	partition CostCenter = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [CostCenterKey = Int64.Type, CostCenter = text, Department = text, Region = text],
+				        {
+				            {10, "Sales", "Commercial", "EMEA"},
+				            {20, "Marketing", "Commercial", "EMEA"},
+				            {30, "R&D", "Operations", "Nordics"},
+				            {40, "G&A", "Corporate", "Nordics"}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

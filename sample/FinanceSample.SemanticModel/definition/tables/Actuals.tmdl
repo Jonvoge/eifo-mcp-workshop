@@ -1,0 +1,69 @@
+table Actuals
+	lineageTag: 8aa91d95-5505-48ee-a602-ec4dd924c168
+
+	measure 'Total Actuals' = SUM(Actuals[Amount])
+		formatString: #,##0
+		lineageTag: 904aca9d-9ad7-41cf-9287-36ac6d26135f
+
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: b42c21dc-ce5d-472a-b60b-fea334411712
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCenterKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 2c1d5743-328e-4163-b28c-cedb5c922be7
+		summarizeBy: none
+		sourceColumn: CostCenterKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 13e5b84d-60f3-4c2b-b137-f715f95197db
+		summarizeBy: none
+		sourceColumn: AccountKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: int64
+		formatString: #,##0
+		lineageTag: c25ccd59-fd17-4346-9cc4-7301b0ad8837
+		summarizeBy: none
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Actuals = m
+		mode: import
+		source =
+				let
+				    Dates = List.Transform({0..23}, each Date.AddMonths(#date(2024, 1, 1), _)),
+				    CCs = {10, 20, 30, 40},
+				    Accts = {1000, 1100, 2000, 3000, 3100, 3200},
+				    Grid = List.Combine(List.Transform(Dates, (d) =>
+				        List.Combine(List.Transform(CCs, (cc) =>
+				            List.Transform(Accts, (a) =>
+				                [Date = d, CostCenterKey = cc, AccountKey = a]))))),
+				    Source = Table.FromRecords(Grid),
+				    Typed = Table.TransformColumnTypes(Source, {{"Date", type date}, {"CostCenterKey", Int64.Type}, {"AccountKey", Int64.Type}}),
+				    WithAmount = Table.AddColumn(Typed, "Amount", each
+				        let
+				            mi = (Date.Year([Date]) - 2024) * 12 + (Date.Month([Date]) - 1),
+				            base = if [AccountKey] = 1000 then 800000 else if [AccountKey] = 1100 then 300000 else if [AccountKey] = 2000 then 350000 else if [AccountKey] = 3000 then 220000 else if [AccountKey] = 3100 then 40000 else 60000,
+				            ccw = if [CostCenterKey] = 10 then 1.0 else if [CostCenterKey] = 20 then 0.6 else if [CostCenterKey] = 30 then 0.8 else 0.5,
+				            trend = 1 + 0.012 * mi,
+				            noise = (Number.Mod(Date.Year([Date]) * 31 + Date.Month([Date]) * 7 + [CostCenterKey] + [AccountKey], 11) - 5) / 100,
+				            value = Number.Round(base * ccw * trend * (1 + noise), 0)
+				        in value, Int64.Type)
+				in
+				    WithAmount
+
+	annotation PBI_ResultType = Table

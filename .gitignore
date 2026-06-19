@@ -1,0 +1,10 @@
+# Power BI Desktop local artifacts
+*.pbix
+**/.pbi/
+*.abf
+*.abf.*
+
+# Editor / OS
+.vscode/*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,23 @@
+relationship 75741aca-4729-4547-ad88-8d45e9a4e09c
+	fromColumn: Actuals.Date
+	toColumn: Date.Date
+
+relationship 2ce6a51c-004f-4dff-a320-04ea3960d120
+	fromColumn: Actuals.CostCenterKey
+	toColumn: CostCenter.CostCenterKey
+
+relationship 2f891093-2468-4cfa-81c8-d9c00330450a
+	fromColumn: Actuals.AccountKey
+	toColumn: Account.AccountKey
+
+relationship fa522d8f-bfba-4b41-a6cd-20b42fa5a656
+	fromColumn: Budget.Date
+	toColumn: Date.Date
+
+relationship f8cbd3a9-2d6f-416a-ac12-d510ebff157e
+	fromColumn: Budget.CostCenterKey
+	toColumn: CostCenter.CostCenterKey
+
+relationship 9d692a40-6437-41d7-9dcc-1f85423436f4
+	fromColumn: Budget.AccountKey
+	toColumn: Account.AccountKey
