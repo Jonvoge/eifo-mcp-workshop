@@ -10,14 +10,6 @@ The user is on a finance team with no Power BI or DAX experience. They describe 
 - Ask before writing to a model and before running a query. Only work on the local sample or the user's own model. Never the production semantic model.
 - Use `DIVIDE(a, b)` rather than `/`. Use explicit measures, not implicit aggregations.
 
-## Domain
-
-Monthly grain. Star schema: `Date`, `CostCenter`, `Account` dimensions; `Actuals` and `Budget` facts.
-
-Variance = Actual − Budget. Variance % = Variance ÷ Budget. Over budget on cost is unfavourable, under is favourable. Revenue and expense are both stored as positive amounts; `Account[AccountCategory]` (Revenue / COGS / Opex) distinguishes them, so do not sum across categories without filtering.
-
-Put new measures in a `Finance` display folder. Currency format `#,##0`, percentages to one decimal.
-
 ## Skills in this repo
 
 - `skills/powerbi-authoring/skills/semantic-model-authoring` for creating or editing tables, columns, measures, relationships.
@@ -27,4 +19,4 @@ Put new measures in a `Finance` display folder. Currency format `#,##0`, percent
 
 ## HTML reports
 
-Query the model for the figures you need, then write one self-contained `.html`. Reference the local chart library at `assets/chart.umd.js` with a relative path. Do not use a CDN. Include a short written summary of what drove the numbers. The HTML is a point-in-time snapshot, not a live connection.
+Query the model for the figures you need, then write one self-contained `.html`.
